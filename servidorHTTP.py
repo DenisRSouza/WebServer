@@ -1,6 +1,7 @@
 #implementação de um servidor base para interpratação de métodos HTTP
 
 import socket
+import os
 
 #definindo o endereço IP do host
 SERVER_HOST = ""
@@ -31,35 +32,56 @@ while True:
     client_connection, client_address = server_socket.accept()
 
     #pega a solicitação do cliente
-    request = client_connection.recv(1024).decode()
+    request = client_connection.recv(4096).decode()
     #verifica se a request possui algum conteúdo (pois alguns navegadores ficam periodicamente enviando alguma string vazia)
     if request:
         #imprime a solicitação do cliente
-        print(request)
         
-        #analisa a solicitação HTTP
-        headers = request.split("\n")
+        #analisa a solicitação HTTP e separa o cabeçalho do corpo da requisição
+        headers = request.split('\r\n\r\n', 1)
         #print(headers)#impressão dos cabeçalhos
         #pega o nome do arquivo sendo solicitado
-        filename = headers[0].split()[1]
 
-        #verifica qual arquivo está sendo solicitado e envia a resposta para o cliente
-        if filename == "/":
-            filename = "/index.html"
+        linha_pedido = headers[0].split()
+        metodo = linha_pedido[0]
 
-        #try e except para tratamento de erro quando um arquivo solicitado não existir
-        try:
-            #abrir o arquivo e enviar para o cliente
-            fin = open("htdocs" + filename)
-            #leio o conteúdo do arquivo para uma variável
-            content = fin.read()
-            #fecho o arquivo
-            fin.close()
-            #envia a resposta
-            response = "HTTP/1.1 200 OK\n\n" + content
-        except FileNotFoundError:
-            #caso o arquivo solicitado não exista no servidor, gera uma resposta de erro
-            response = "HTTP/1.1 404 NOT FOUND\n\n<h1>ERROR 404!<br>File Not Found!</h1>"
+        print(metodo)
+        filename = linha_pedido[1]
+        filename = os.path.basename(filename)
+        print(filename)
+
+        print(metodo)
+        response = ''
+        if metodo == "GET":
+            try:
+                print("ENTROU")
+                fin = open('htdocs/'+filename, 'r')
+                content = fin.read()
+                fin.close()
+
+                response_header = b"HTTP/1.1 200 OK\r\n\r\n"
+                client_connection.sendall(response_header + content) #Vai enviar a resposta em bytes junto com o conteúdo do arquivo
+                print(f"[GET] Arquivo '{filename}' enviado com sucesso")
+
+            except:
+                response = b"HTTP/1.1 404 NOT FOUND\r\n\r\n<h2> ERROR 404 <br> FILE NOT FOUND <h2>"
+                print(f"[GET] ERROR 404 Arquivo '{filename}' não foi encontrado")
+
+
+
+        # #try e except para tratamento de erro quando um arquivo solicitado não existir
+        # try:
+        #     #abrir o arquivo e enviar para o cliente
+        #     fin = open("htdocs" + filename)
+        #     #leio o conteúdo do arquivo para uma variável
+        #     content = fin.read()
+        #     #fecho o arquivo
+        #     fin.close()
+        #     #envia a resposta
+        #     response = "HTTP/1.1 200 OK\n\n" + content
+        # except FileNotFoundError:
+        #     #caso o arquivo solicitado não exista no servidor, gera uma resposta de erro
+        #     response = "HTTP/1.1 404 NOT FOUND\n\n<h1>ERROR 404!<br>File Not Found!</h1>"
 
 
         #envia a resposta HTTP
