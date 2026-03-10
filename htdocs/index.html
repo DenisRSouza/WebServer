@@ -3,8 +3,43 @@
     <title>Hello World</title>
 </head>
 <body>
-    <h1>Hello World!</h1>
-    <p>Welcome to the index.html web page..</p>
-    <p>Here's a link to <a href="ipsum.html">Ipsum</a></p>
+    <h1>Central News</h1>
+    <h2>Bem-vindo a fonte da verdade absoluta :)</h2>
+    <section>
+        <article>
+            <h3>noticia1</h3>
+            <p>aqui vai uma breve descricao da noticia</p>
+            <img src="../public/cabra-macabra.jpg"/>
+        </article>
+        <article>
+            <h3>noticia2</h3>
+            <p>aqui vai uma breve descricao da noticia</p>
+            <img src="../public/cabra-macabra.jpg"/>
+        </article>
+        <article>
+            <h3>noticia3</h3>
+            <p>aqui vai uma breve descricao da noticia</p>
+            <img src="../public/cabra-macabra.jpg"/>
+        </article>
+        <button>mostrar mais...</button>
+    </section>
+
+    <form>
+      <h2>Criar nova noticia</h2>
+      
+      <label for="titulo">Título</label>
+      <input type="text" id="titulo" name="titulo" placeholder="Baleia baleia baleia" required />
+
+      <label for="descricao">Descrição</label>
+      <input type="text" id="descricao" name="descricao" placeholder="Uma baleia baleou outra baleia 😱" required />
+
+      <label for="body">Corpo do texto</label>
+      <input type="text" id="body" name="body" placeholder="Uma balei pegou uma pistola modelo 8 milimetros, alvejou uma colega baleia azul, mirou e atinigiu a coitada." required />
+
+      <label for="image">Escolha uma imagem</label>
+      <input type="file" id="image" accept="image/*" name="image" required />
+
+      <button type="submit">Criar notícia</button>
+    </form>
 </body>
 </html>
