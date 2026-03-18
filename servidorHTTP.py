@@ -32,15 +32,24 @@ while True:
     client_connection, client_address = server_socket.accept()
 
     #pega a solicitação do cliente
-    request = client_connection.recv(4096).decode()
+    request = client_connection.recv(4096) #tive que tirar o decode porque ele não lia imagens pq eh texto
     #verifica se a request possui algum conteúdo (pois alguns navegadores ficam periodicamente enviando alguma string vazia)
     if request:
         #imprime a solicitação do cliente
         
         #analisa a solicitação HTTP e separa o cabeçalho do corpo da requisição
-        headers = request.split('\r\n\r\n', 1)
+        headers_bytes = request.split(b'\r\n\r\n', 1)
         #print(headers)#impressão dos cabeçalhos
         #pega o nome do arquivo sendo solicitado
+
+
+        #como tirei o decode precisamos decodificar a parte do cabeçalho pra ler o texto
+
+        header_text = headers_bytes[0].decode('utf-8', errors = 'ignore')
+        headers = [header_text]
+        
+        if len(headers_bytes) > 1:
+            headers.append(headers_bytes[1].decode('utf-8', errors = 'ignore'))
 
         linha_pedido = headers[0].split()
         metodo = linha_pedido[0]
@@ -54,20 +63,54 @@ while True:
         response = ''
         if metodo == "GET":
             try:
-                print("ENTROU")
-                fin = open('htdocs/'+filename, 'r')
+                print("METODO GET")
+                fin = open('htdocs/'+filename, 'rb') #rb para ler em bytes
                 content = fin.read()
                 fin.close()
 
-                response_header = b"HTTP/1.1 200 OK\r\n\r\n"
+                response_header = b"HTTP/1.1 200 OK\r\n\r\n" 
+                #tava dando erro pois o fin estava abrindo o arquivo como string e o response_header tinha um b para ler em bytes
+
                 client_connection.sendall(response_header + content) #Vai enviar a resposta em bytes junto com o conteúdo do arquivo
                 print(f"[GET] Arquivo '{filename}' enviado com sucesso")
 
-            except:
+            except FileNotFoundError:
                 response = b"HTTP/1.1 404 NOT FOUND\r\n\r\n<h2> ERROR 404 <br> FILE NOT FOUND <h2>"
+                client_connection.sendall(response_header + content)
                 print(f"[GET] ERROR 404 Arquivo '{filename}' não foi encontrado")
 
+        elif metodo == "POST":
+            try:
+                print("METODO POST")
 
+                file_size = 0
+                header_line = header[0].split('\r\n')
+                for line in header_line:
+                    if line.lower().startswith('content-lenght:'):
+                        # vai pegar o número que vem depois dos dois pontos e converte pra inteiro
+                        file_size = int(line.split(':')[1].strip())
+
+                body = headers[1].encode() if len(headers) > 1 else b''
+
+                while len(body) < tamanho_arquivo:
+                    pedaco = client_connection.recv(4096)
+                    if not pedaco:
+                        break
+                    body += pedaco # Vai juntando os pedaços em bytes
+
+                with open('htdocs/' + filename, 'wb') as fout:
+                    fout.write(corpo)
+                
+                # 5. Enviar a resposta de sucesso (201 Created)
+                response = b"HTTP/1.1 201 Created\r\n\r\n<h2>Arquivo salvo no servidor com sucesso!</h2>"
+                client_connection.sendall(response)
+                print(f"[POST] Arquivo '{filename}' salvo com sucesso!")
+
+            except Exception as e:
+                # Caso dê erro ao salvar 
+                response = b"HTTP/1.1 500 Internal Server Error\r\n\r\n<h2>Erro no servidor</h2>"
+                client_connection.sendall(response)
+                print(f"[POST] ERRO ao salvar o arquivo: {e}")
 
         # #try e except para tratamento de erro quando um arquivo solicitado não existir
         # try:
@@ -90,5 +133,7 @@ while True:
         client_connection.close()
 
 server_socket.close()
+
+#OBS: tentar tirar o b do response pra parar o erro da linha 131
 
 
