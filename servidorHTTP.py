@@ -101,13 +101,13 @@ while True:
                 with open('htdocs/' + filename, 'wb') as fout:
                     fout.write(corpo)
                 
-                # 5. Enviar a resposta de sucesso (201 Created)
+                #Enviar a resposta de sucesso (201 Created)
                 response = b"HTTP/1.1 201 Created\r\n\r\n<h2>Arquivo salvo no servidor com sucesso!</h2>"
                 client_connection.sendall(response)
                 print(f"[POST] Arquivo '{filename}' salvo com sucesso!")
 
             except Exception as e:
-                # Caso dê erro ao salvar 
+                
                 response = b"HTTP/1.1 500 Internal Server Error\r\n\r\n<h2>Erro no servidor</h2>"
                 client_connection.sendall(response)
                 print(f"[POST] ERRO ao salvar o arquivo: {e}")
