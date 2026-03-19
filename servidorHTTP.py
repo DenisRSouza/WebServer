@@ -2,6 +2,7 @@
 
 import socket
 import os
+import mimetypes
 
 #definindo o endereço IP do host
 SERVER_HOST = ""
@@ -32,51 +33,43 @@ while True:
     client_connection, client_address = server_socket.accept()
 
     #pega a solicitação do cliente
-    request = client_connection.recv(4096) #tive que tirar o decode porque ele não lia imagens pq eh texto
+    request = client_connection.recv(4096)
     #verifica se a request possui algum conteúdo (pois alguns navegadores ficam periodicamente enviando alguma string vazia)
     if request:
         #imprime a solicitação do cliente
-        
         #analisa a solicitação HTTP e separa o cabeçalho do corpo da requisição
-        headers_bytes = request.split(b'\r\n\r\n', 1)
-        #print(headers)#impressão dos cabeçalhos
-        #pega o nome do arquivo sendo solicitado
+        parsed_request = request.split(b'\r\n\r\n', 1)
 
+        header_text = parsed_request[0].decode('utf-8')
+        body_text = parsed_request[1].decode('utf-8') if len(parsed_request) > 1 else ''
 
-        #como tirei o decode precisamos decodificar a parte do cabeçalho pra ler o texto
-
-        header_text = headers_bytes[0].decode('utf-8', errors = 'ignore')
-        headers = [header_text]
-        
-        if len(headers_bytes) > 1:
-            headers.append(headers_bytes[1].decode('utf-8', errors = 'ignore')) Já trocou
-
-        linha_pedido = headers[0].split()
-        metodo = linha_pedido[0]
-
-        print(metodo)
-        filename = linha_pedido[1]
-        filename = os.path.basename(filename)
-        print(filename)
-
-        print(metodo)
+        parsed_headers_text = header_text.split()
+        metodo = parsed_headers_text[0]
+        filename = parsed_headers_text[1]
         response = ''
+
         if metodo == "GET":
             try:
                 print("METODO GET")
-                fin = open('htdocs/'+filename, 'rb') #rb para ler em bytes
-                content = fin.read()
-                fin.close()
+                
+                with open ('htdocs' + filename, 'rb') as f:
+                    data = f.read()
 
-                response_header = b"HTTP/1.1 200 OK\r\n\r\n" 
-                #tava dando erro pois o fin estava abrindo o arquivo como string e o response_header tinha um b para ler em bytes
+                response_header = []
+                response_header.append(b"HTTP/1.1 200 OK")
 
-                client_connection.sendall(response_header + content) #Vai enviar a resposta em bytes junto com o conteúdo do arquivo
+                content_type, _ = mimetypes.guess_type(filename)
+                if content_type:
+                    response_header.append(f"Content-Type: {content_type}".encode('utf-8'))
+
+                response_header.append(f"Content-Length: {len(data)}".encode('utf-8)'))
+
+                client_connection.sendall(b'\r\n'.join(response_header) + b'\r\n\r\n' + data) #Vai enviar a resposta em bytes junto com o conteúdo do arquivo
                 print(f"[GET] Arquivo '{filename}' enviado com sucesso")
 
             except FileNotFoundError:
                 response = b"HTTP/1.1 404 NOT FOUND\r\n\r\n<h2> ERROR 404 <br> FILE NOT FOUND <h2>"
-                client_connection.sendall(response) #tava dando errado pq tinha colocado client_connection.sendall(response_header + content)
+                client_connection.sendall(response)
                 print(f"[GET] ERROR 404 Arquivo '{filename}' não foi encontrado")
 
         elif metodo == "POST":
