@@ -48,8 +48,8 @@ while True:
         header_text = headers_bytes[0].decode('utf-8', errors = 'ignore')
         headers = [header_text]
         
-        #if len(headers_bytes) > 1:
-         #   headers.append(headers_bytes[1].decode('utf-8', errors = 'ignore')) Já trocou
+        if len(headers_bytes) > 1:
+            headers.append(headers_bytes[1].decode('utf-8', errors = 'ignore')) Já trocou
 
         linha_pedido = headers[0].split()
         metodo = linha_pedido[0]
