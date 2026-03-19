@@ -48,8 +48,8 @@ while True:
         header_text = headers_bytes[0].decode('utf-8', errors = 'ignore')
         headers = [header_text]
         
-        if len(headers_bytes) > 1:
-            headers.append(headers_bytes[1].decode('utf-8', errors = 'ignore'))
+        #if len(headers_bytes) > 1:
+         #   headers.append(headers_bytes[1].decode('utf-8', errors = 'ignore')) Já trocou
 
         linha_pedido = headers[0].split()
         metodo = linha_pedido[0]
@@ -76,7 +76,7 @@ while True:
 
             except FileNotFoundError:
                 response = b"HTTP/1.1 404 NOT FOUND\r\n\r\n<h2> ERROR 404 <br> FILE NOT FOUND <h2>"
-                client_connection.sendall(response_header + content)
+                client_connection.sendall(response) #tava dando errado pq tinha colocado client_connection.sendall(response_header + content)
                 print(f"[GET] ERROR 404 Arquivo '{filename}' não foi encontrado")
 
         elif metodo == "POST":
@@ -84,7 +84,7 @@ while True:
                 print("METODO POST")
 
                 file_size = 0
-                header_line = header[0].split('\r\n')
+                header_line = headers_text[0].split('\r\n')
                 for line in header_line:
                     if line.lower().startswith('content-length:'): #eu tinha escrito content-lenght
                         # vai pegar o número que vem depois dos dois pontos e converte pra inteiro
@@ -92,7 +92,7 @@ while True:
 
                 body = headers[1].encode() if len(headers) > 1 else b'' # se não existir headers[1] então o body vai ser um corpo vazio de bytes
 
-                while len(body) < tamanho_arquivo:
+                while len(body) < file_size:
                     pedaco = client_connection.recv(4096)
                     if not pedaco:
                         break
@@ -112,22 +112,6 @@ while True:
                 client_connection.sendall(response)
                 print(f"[POST] ERRO ao salvar o arquivo: {e}")
 
-        # #try e except para tratamento de erro quando um arquivo solicitado não existir
-        # try:
-        #     #abrir o arquivo e enviar para o cliente
-        #     fin = open("htdocs" + filename)
-        #     #leio o conteúdo do arquivo para uma variável
-        #     content = fin.read()
-        #     #fecho o arquivo
-        #     fin.close()
-        #     #envia a resposta
-        #     response = "HTTP/1.1 200 OK\n\n" + content
-        # except FileNotFoundError:
-        #     #caso o arquivo solicitado não exista no servidor, gera uma resposta de erro
-        #     response = "HTTP/1.1 404 NOT FOUND\n\n<h1>ERROR 404!<br>File Not Found!</h1>"
-
-
-        #envia a resposta HTTP
         client_connection.sendall(response.encode())
 
         client_connection.close()
