@@ -86,11 +86,11 @@ while True:
                 file_size = 0
                 header_line = header[0].split('\r\n')
                 for line in header_line:
-                    if line.lower().startswith('content-lenght:'):
+                    if line.lower().startswith('content-length:'): #eu tinha escrito content-lenght
                         # vai pegar o número que vem depois dos dois pontos e converte pra inteiro
                         file_size = int(line.split(':')[1].strip())
 
-                body = headers[1].encode() if len(headers) > 1 else b''
+                body = headers[1].encode() if len(headers) > 1 else b'' # se não existir headers[1] então o body vai ser um corpo vazio de bytes
 
                 while len(body) < tamanho_arquivo:
                     pedaco = client_connection.recv(4096)
@@ -99,7 +99,7 @@ while True:
                     body += pedaco # Vai juntando os pedaços em bytes
 
                 with open('htdocs/' + filename, 'wb') as fout:
-                    fout.write(corpo)
+                    fout.write(body)
                 
                 #Enviar a resposta de sucesso (201 Created)
                 response = b"HTTP/1.1 201 Created\r\n\r\n<h2>Arquivo salvo no servidor com sucesso!</h2>"
