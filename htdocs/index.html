@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
   </head>
+  <link rel="stylesheet" href="index.css">
   <body>
     <h1>Central News</h1>
     <h2>Bem-vindo a fonte da verdade absoluta :)</h2>
@@ -30,7 +31,8 @@
     <form>
       <h2>Criar nova noticia</h2>
 
-      <label for="titulo">Título</label>
+      <label class = "label-maior" for="titulo">Título</label>
+      <br>
       <input
         type="text"
         id="titulo"
@@ -38,8 +40,10 @@
         placeholder="Baleia baleia baleia"
         required
       />
-
+      <br>
+      <br>
       <label for="descricao">Descrição</label>
+      <br>
       <input
         type="text"
         id="descricao"
@@ -47,19 +51,24 @@
         placeholder="Uma baleia baleou outra baleia 😱"
         required
       />
-
+      <br>
+      <br>
       <label for="body">Corpo do texto</label>
+      <br>
       <input
         type="text"
+        class = "label-maior"
         id="body"
         name="body"
         placeholder="Uma balei pegou uma pistola modelo 8 milimetros, alvejou uma colega baleia azul, mirou e atinigiu a coitada."
         required
       />
-
+      <br>
+      <br>
       <label for="image">Escolha uma imagem</label>
       <input type="file" id="image" accept="image/*" name="image" required />
-
+      <br>
+      <br>
       <button type="submit">Criar notícia</button>
     </form>
   </body>
