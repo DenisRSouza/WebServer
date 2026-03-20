@@ -1,4 +1,104 @@
-.label-maior{
-    width: 500px;
-    height: 200px;
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
+
+body{
+    font-family: 'Segoe UI', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: #333; /* cor da fonte */
+    line-height: 1.6; /*define o espaçamento vertical das linhas, aí não precisa do br */
+    max-width: 900px; /* largura máxima que um elemento pode ter */
+    padding: 20px;
+    margin: 0 auto;
+}
+
+
+h1{
+    text-align: center;
+    color: #0056D2;
+    font-size: 4rem;
+    margin-bottom: 20px; /* espaço de baixo do h1 */
+    font-weight: 500; /*vai definir a grossura da fonte, não sei qual fica melhor*/
+}
+
+h2{
+    text-align: center;
+    color: #32495F;
+    font-size: 1.5rem;
+    margin-bottom: 40px;
+    font-weight: 600;
+}
+
+section{
+    display: block;
+    max-width: 400px;  /* vai limitar o tamanho de cada bloco pra não ocupar a página toda */
+}
+
+article{
+    padding: 30px; /*vai colocar o gap entre cada noticia pra nao ficar colado */
+    box-shadow: 0 4px 6px #88A9FF; /* colocar o 0 antes deixa a sombra mais suave */
+    margin-bottom: 50px;
+    transition: transform 0.2s;
+    border-radius: 8px; /*deixa a borda arredondada */ 
+
+    /* OBS: não to conseguindo alinhar o h1 e o h1 no centro e as notícias à esquerda, o problema tá no margin: 0 auto no body */
+   
+}
+
+article:hover {
+  transform: translateY(-5px); /*move pra cimaa muito fodaa */
+}
+
+article h3{
+    color: #5B8CFF;
+    margin-bottom: 20px;
+}
+
+article p{
+    color: #002C72;
+    font-weight: 500;
+    margin-bottom: 30px;
+}
+
+article img{
+    width: 100%;
+    border-radius: 8px;
+    object-fit: cover; /* isso aqui ajuda pq se a gente quiser aumentar o tamanho da imagem com o height e imagem vai aumentar automaticamente com o tamanho especificado */
+
+}
+
+.campo{
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+.campo label{
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.campo input{
+  padding: 10px;
+}
+
+button{
+    
+    position: relative; /* nao sei pq nao ta mudando a posição */
+    padding: 10px 22px;
+    background: #0056D2;
+    color: #fff;
+    border-radius: 6px;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 0 5px 10px #5B8CFF;
+    animation: pulse 1.5s infinite;
+}
+
+button:active{
+    transform: scale(0.96); /*ele pula quando clicaaa */
+}
+
