@@ -47,6 +47,7 @@ while True:
         metodo = parsed_headers_text[0]
         filename = parsed_headers_text[1]
         response = ''
+        data = ''
 
         if metodo == "GET":
             try:
@@ -58,6 +59,7 @@ while True:
                 response_header = []
                 response_header.append(b"HTTP/1.1 200 OK")
 
+
                 content_type, _ = mimetypes.guess_type(filename)
                 if content_type:
                     response_header.append(f"Content-Type: {content_type}".encode('utf-8'))
@@ -67,10 +69,10 @@ while True:
                 client_connection.sendall(b'\r\n'.join(response_header) + b'\r\n\r\n' + data) #Vai enviar a resposta em bytes junto com o conteúdo do arquivo
                 print(f"[GET] Arquivo '{filename}' enviado com sucesso")
 
-            except FileNotFoundError:
-                response = b"HTTP/1.1 404 NOT FOUND\r\n\r\n<h2> ERROR 404 <br> FILE NOT FOUND <h2>"
+            except Exception as e:
+                response = b"HTTP/1.1 404 NOT FOUND\r\nContent-Type: text/html\r\n\r\n <h2> ERROR 404 <br> FILE NOT FOUND <h2>"
                 client_connection.sendall(response)
-                print(f"[GET] ERROR 404 Arquivo '{filename}' não foi encontrado")
+                print(f"[GET] ERRO ao enviar o arquivo: {e}")
 
         elif metodo == "POST":
             try:
@@ -100,16 +102,16 @@ while True:
                 print(f"[POST] Arquivo '{filename}' salvo com sucesso!")
 
             except Exception as e:
-                
+                print(f"[POST] ERRO ao salvar o arquivo: {e}")
                 response = b"HTTP/1.1 500 Internal Server Error\r\n\r\n<h2>Erro no servidor</h2>"
                 client_connection.sendall(response)
                 print(f"[POST] ERRO ao salvar o arquivo: {e}")
-
-        client_connection.sendall(response.encode())
-
-        client_connection.close()
-
-server_socket.close()
+        else:
+            response = b"HTTP/1.1 405 Method Not Allowed\r\n\r\n<h2>Metodo HTTP nao suportado</h2>"
+            client_connection.sendall(response)
+            print(f"[ERROR] Metodo HTTP '{metodo}' não suportado")
+    #fecha a conexão com o cliente
+    client_connection.close()
 
 #OBS: tentar tirar o b do response pra parar o erro da linha 131
 
