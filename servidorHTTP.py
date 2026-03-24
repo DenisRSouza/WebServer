@@ -40,8 +40,11 @@ while True:
         #analisa a solicitação HTTP e separa o cabeçalho do corpo da requisição
         parsed_request = request.split(b'\r\n\r\n', 1)
 
-        header_text = parsed_request[0].decode('utf-8')
+        headers_text = parsed_request[0].decode('utf-8')
         body_text = parsed_request[1].decode('utf-8') if len(parsed_request) > 1 else ''
+
+        
+
 
         parsed_headers_text = header_text.split()
         metodo = parsed_headers_text[0]
@@ -85,7 +88,7 @@ while True:
                         # vai pegar o número que vem depois dos dois pontos e converte pra inteiro
                         file_size = int(line.split(':')[1].strip())
 
-                body = headers[1].encode() if len(headers) > 1 else b'' # se não existir headers[1] então o body vai ser um corpo vazio de bytes
+                body = header_line[1].encode() if len(header_line) > 1 else b'' # se não existir headers[1] então o body vai ser um corpo vazio de bytes
 
                 while len(body) < file_size:
                     pedaco = client_connection.recv(4096)

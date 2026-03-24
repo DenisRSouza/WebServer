@@ -103,3 +103,8 @@ button:active{
     align-items: end;
     gap: 20px;
 }
+
+#body{
+    width: 500px;
+    height: 675px;
+}
