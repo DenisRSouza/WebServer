@@ -32,11 +32,6 @@ h2{
     font-weight: 600;
 }
 
-section{
-    display: block;
-    max-width: 400px;  /* vai limitar o tamanho de cada bloco pra não ocupar a página toda */
-}
-
 article{
     padding: 30px; /*vai colocar o gap entre cada noticia pra nao ficar colado */
     box-shadow: 0 4px 6px #88A9FF; /* colocar o 0 antes deixa a sombra mais suave */
@@ -102,3 +97,9 @@ button:active{
     transform: scale(0.96); /*ele pula quando clicaaa */
 }
 
+.news-home{
+    display: flex;
+    flex-direction: row;
+    align-items: end;
+    gap: 20px;
+}
