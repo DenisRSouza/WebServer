@@ -41,12 +41,12 @@ while True:
         parsed_request = request.split(b'\r\n\r\n', 1)
 
         headers_text = parsed_request[0].decode('utf-8')
-        body_text = parsed_request[1].decode('utf-8') if len(parsed_request) > 1 else ''
+        body_text = parsed_request[1] if len(parsed_request) > 1 else b''
 
         
 
 
-        parsed_headers_text = header_text.split()
+        parsed_headers_text = headers_text.split()
         metodo = parsed_headers_text[0]
         filename = parsed_headers_text[1]
         response = ''
@@ -82,13 +82,13 @@ while True:
                 print("METODO POST")
 
                 file_size = 0
-                header_line = headers_text[0].split('\r\n')
+                header_line = headers_text.split('\r\n')
                 for line in header_line:
                     if line.lower().startswith('content-length:'): #eu tinha escrito content-lenght
                         # vai pegar o número que vem depois dos dois pontos e converte pra inteiro
                         file_size = int(line.split(':')[1].strip())
 
-                body = header_line[1].encode() if len(header_line) > 1 else b'' # se não existir headers[1] então o body vai ser um corpo vazio de bytes
+                body = body_text
 
                 while len(body) < file_size:
                     pedaco = client_connection.recv(4096)
@@ -96,23 +96,43 @@ while True:
                         break
                     body += pedaco # Vai juntando os pedaços em bytes
 
-                with open('htdocs/' + filename, 'wb') as fout:
-                    fout.write(body)
+
+                #fazendo o while pra verificar se já existe noticia{i}
+                i = 1
+                while True:
+                    arquivo_html = f"noticia{i}.html"
+                    caminho_html = os.path.join('htdocs', arquivo_html)
+                    
+                    if not os.path.exists(caminho_html): # se esse caminho não existir vai parar e criar o arquivo com esse nome
+                        break
+                    i += 1
+
+                nome_imagem = f"imagem_noticia{i}.jpg"
+                with open(os.path.join('htdocs', nome_imagem), 'wb') as f_img:
+                    f_img.write(body) 
                 
-                #Enviar a resposta de sucesso (201 Created)
-                response = b"HTTP/1.1 201 Created\r\n\r\n<h2>Arquivo salvo no servidor com sucesso!</h2>"
+                with open(caminho_html, 'w', encoding='utf-8') as f_html:
+                    f_html.write(f"<!DOCTYPE html><html><body><img src='{nome_imagem}'></body></html>")
+
+                
+                response = b"HTTP/1.1 201 Created\r\nContent-Type: text/html\r\n\r\n"
+                response += f"<h2>A noticia {i} foi criada!</h2><a href='/{arquivo_html}'>Ver Noticia</a>".encode('utf-8')
                 client_connection.sendall(response)
-                print(f"[POST] Arquivo '{filename}' salvo com sucesso!")
+                
+                print(f"[POST] '{arquivo_html}' e '{nome_imagem}' criados")
 
             except Exception as e:
                 print(f"[POST] ERRO ao salvar o arquivo: {e}")
                 response = b"HTTP/1.1 500 Internal Server Error\r\n\r\n<h2>Erro no servidor</h2>"
                 client_connection.sendall(response)
                 print(f"[POST] ERRO ao salvar o arquivo: {e}")
+
         else:
             response = b"HTTP/1.1 405 Method Not Allowed\r\n\r\n<h2>Metodo HTTP nao suportado</h2>"
             client_connection.sendall(response)
             print(f"[ERROR] Metodo HTTP '{metodo}' não suportado")
+
+        
     #fecha a conexão com o cliente
     client_connection.close()
 
