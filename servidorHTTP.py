@@ -140,8 +140,7 @@ while True:
                     f_html.write(f"<!DOCTYPE html><html><head><title>{info[0]}</title></head><body><h1>{info[0]}</h1><h2>{info[1]}</h2><p>{info[2]}</p><img src='{nome_imagem}'></body></html>")
 
                 
-                response = b"HTTP/1.1 201 Created\r\nContent-Type: text/html\r\n\r\n"
-                response += f"<h2>A noticia {i} foi criada!</h2><a href='/{arquivo_html}'>Ver Noticia</a>".encode('utf-8')
+                response = b"HTTP/1.1 302\r\nLocation: index.html\r\n\r\n"
                 client_connection.sendall(response)
                 
                 print(f"[POST] '{arquivo_html}' e '{nome_imagem}' criados")
