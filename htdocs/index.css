@@ -15,7 +15,6 @@ body{
     margin: 0 auto;
 }
 
-
 h1{
     text-align: center;
     color: #0056D2;
@@ -32,33 +31,34 @@ h2{
     font-weight: 600;
 }
 
-article{
+.news-home a {
     padding: 30px; /*vai colocar o gap entre cada noticia pra nao ficar colado */
     box-shadow: 0 4px 6px #88A9FF; /* colocar o 0 antes deixa a sombra mais suave */
     margin-bottom: 50px;
     transition: transform 0.2s;
-    border-radius: 8px; /*deixa a borda arredondada */ 
-
+    border-radius: 8px; /*deixa a borda arredondada */
+    display: flex;
+    flex-direction: column;
     /* OBS: não to conseguindo alinhar o h1 e o h1 no centro e as notícias à esquerda, o problema tá no margin: 0 auto no body */
    
 }
 
-article:hover {
+a:hover {
   transform: translateY(-5px); /*move pra cimaa muito fodaa */
 }
 
-article h3{
+h3{
     color: #5B8CFF;
     margin-bottom: 20px;
 }
 
-article p{
+a p{
     color: #002C72;
     font-weight: 500;
     margin-bottom: 30px;
 }
 
-article img{
+a img{
     width: 100%;
     border-radius: 8px;
     object-fit: cover; /* isso aqui ajuda pq se a gente quiser aumentar o tamanho da imagem com o height e imagem vai aumentar automaticamente com o tamanho especificado */

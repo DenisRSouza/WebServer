@@ -137,13 +137,14 @@ while True:
                     f_img.write(image) 
                 
                 with open(caminho_html, 'w', encoding='utf-8') as f_html:
-                    f_html.write(f"<!DOCTYPE html><html><head><title>{info[0]}</title></head><body><h1>{info[0]}</h1><h2>{info[1]}</h2><p>{info[2]}</p><img src='{nome_imagem}'></body></html>")
+                    f_html.write(f"<!DOCTYPE html><html><head><title>{info[0]}</title></head><body><h1>{info[0]}</h1><h2>{info[1]}</h2><p>{info[2]}</p><img src='{nome_imagem}'><a href='index.html'>Voltar</a></body></html>")
 
                 new_post_info = {
                     "titulo": info[0],
                     "subtitulo": info[1],
                     "conteudo": info[2],
-                    "image_dir": nome_imagem
+                    "image_dir": nome_imagem,
+                    "new_dir": arquivo_html
                 }
 
                 if not os.path.exists(os.path.join('htdocs', "news.json")):
