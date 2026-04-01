@@ -1,5 +1,6 @@
 #implementação de um servidor base para interpratação de métodos HTTP
 
+import json
 import socket
 import os
 import mimetypes
@@ -121,7 +122,6 @@ while True:
                 image.strip(b'\r\n--'+boundary.encode()+b'--')
 
 
-
                 #fazendo o while pra verificar se já existe noticia{i}
                 i = 1
                 while True:
@@ -139,7 +139,26 @@ while True:
                 with open(caminho_html, 'w', encoding='utf-8') as f_html:
                     f_html.write(f"<!DOCTYPE html><html><head><title>{info[0]}</title></head><body><h1>{info[0]}</h1><h2>{info[1]}</h2><p>{info[2]}</p><img src='{nome_imagem}'></body></html>")
 
-                
+                new_post_info = {
+                    "titulo": info[0],
+                    "subtitulo": info[1],
+                    "conteudo": info[2],
+                    "image_dir": nome_imagem
+                }
+
+                if not os.path.exists(os.path.join('htdocs', "news.json")):
+                    with open(os.path.join('htdocs', "news.json"), 'w', encoding='utf-8') as f_json:
+                        json.dump([new_post_info], f_json, indent=4)
+                else:
+
+                    with open(os.path.join('htdocs', "news.json"), 'r', encoding='utf-8') as f_json:
+                        news = json.load(f_json)
+                    
+                    news.append(new_post_info)
+
+                    with open(os.path.join('htdocs', "news.json"), 'w', encoding='utf-8') as f_json:
+                        json.dump(news, f_json, indent=4)
+
                 response = b"HTTP/1.1 302\r\nLocation: index.html\r\n\r\n"
                 client_connection.sendall(response)
                 
