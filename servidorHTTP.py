@@ -3,6 +3,7 @@
 import socket
 import os
 import mimetypes
+import traceback
 
 #definindo o endereço IP do host
 SERVER_HOST = ""
@@ -80,13 +81,15 @@ while True:
         elif metodo == "POST":
             try:
                 print("METODO POST")
-
                 file_size = 0
+                boundary = ''
                 header_line = headers_text.split('\r\n')
                 for line in header_line:
                     if line.lower().startswith('content-length:'): #eu tinha escrito content-lenght
                         # vai pegar o número que vem depois dos dois pontos e converte pra inteiro
                         file_size = int(line.split(':')[1].strip())
+                    if line.lower().startswith('content-type:'):
+                        boundary = line.split('=')[1].strip()
 
                 body = body_text
 
@@ -95,6 +98,28 @@ while True:
                     if not pedaco:
                         break
                     body += pedaco # Vai juntando os pedaços em bytes
+
+                #parsing do body (multipart/form)
+                data_fields = body.split(b'--'+boundary.encode()+b'\r\n')[1:] 
+
+                image = None
+                info = []
+
+                for field in data_fields:
+                    e = field.split(b'\r\n\r\n')
+
+                    header = e[0].decode()
+                    specific_body = ''
+
+                    if 'image' in header:
+                        specific_body = e[1].strip(b'\r\n')
+                        image = specific_body
+                    else:
+                        specific_body = e[1].strip(b'\r\n').decode()
+                        info.append(specific_body)
+
+                image.strip(b'\r\n--'+boundary.encode()+b'--')
+
 
 
                 #fazendo o while pra verificar se já existe noticia{i}
@@ -109,10 +134,10 @@ while True:
 
                 nome_imagem = f"imagem_noticia{i}.jpg"
                 with open(os.path.join('htdocs', nome_imagem), 'wb') as f_img:
-                    f_img.write(body) 
+                    f_img.write(image) 
                 
                 with open(caminho_html, 'w', encoding='utf-8') as f_html:
-                    f_html.write(f"<!DOCTYPE html><html><body><img src='{nome_imagem}'></body></html>")
+                    f_html.write(f"<!DOCTYPE html><html><head><title>{info[0]}</title></head><body><h1>{info[0]}</h1><h2>{info[1]}</h2><p>{info[2]}</p><img src='{nome_imagem}'></body></html>")
 
                 
                 response = b"HTTP/1.1 201 Created\r\nContent-Type: text/html\r\n\r\n"
@@ -123,9 +148,9 @@ while True:
 
             except Exception as e:
                 print(f"[POST] ERRO ao salvar o arquivo: {e}")
+                traceback.print_exc()
                 response = b"HTTP/1.1 500 Internal Server Error\r\n\r\n<h2>Erro no servidor</h2>"
                 client_connection.sendall(response)
-                print(f"[POST] ERRO ao salvar o arquivo: {e}")
 
         else:
             response = b"HTTP/1.1 405 Method Not Allowed\r\n\r\n<h2>Metodo HTTP nao suportado</h2>"
