@@ -1,0 +1,79 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+    line-height: 1.6;
+    max-width: 900px;
+    padding: 20px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+}
+
+h1{
+    text-align: center;
+    color: #0056D2;
+    font-size: 4rem;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+h2{
+    text-align: center;
+    color: #32495F;
+    font-size: 1.5rem;
+    margin-bottom: 40px;
+    font-weight: 600;
+}
+
+p{
+    color: #002C72;
+    font-weight: 500;
+    font-size: 1.1rem; 
+    margin-bottom: 30px;
+    text-align: justify; /* coloquei porque vai deixar todas as linhas do parágrafo do mesmo tamanho */
+    width: 100%;
+    max-width: 700px; /* vai definir largura máxima */
+}
+
+
+img{
+    width: 100%;
+    max-width: 600px; 
+    height: auto; /* colocando auto fica melhor pq vai ajustar automaticamente com o tamanho da imagem*/
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px #88A9FF; 
+    margin-bottom: 40px;
+}
+
+
+a{
+    display: flex;
+    padding: 10px 22px;
+    background: #0056D2;
+    color: #fff;
+    text-decoration: none; 
+    border-radius: 6px;
+    font-size: 18px;
+    font-weight: 600;
+    box-shadow: 0 5px 10px #5B8CFF;
+    transition: transform 0.2s;
+    margin-bottom: 30px;
+}
+
+
+a:hover{
+    transform: translateY(-5px); 
+}
+
+a:active{
+    transform: scale(0.96); 
+}

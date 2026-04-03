@@ -137,7 +137,7 @@ while True:
                     f_img.write(image) 
                 
                 with open(caminho_html, 'w', encoding='utf-8') as f_html:
-                    f_html.write(f"<!DOCTYPE html><html><head><title>{info[0]}</title></head><body><h1>{info[0]}</h1><h2>{info[1]}</h2><p>{info[2]}</p><img src='{nome_imagem}'><a href='index.html'>Voltar</a></body></html>")
+                    f_html.write(f"<!DOCTYPE html><html><head><meta charset='UTF-8' /><title>{info[0]}</title><link rel='stylesheet' href='noticia.css'></head><body><h1>{info[0]}</h1><h2>{info[1]}</h2><p>{info[2]}</p><img src='{nome_imagem}'><a href='index.html'>Voltar</a></body></html>") # coloquei o <head><meta charset='UTF-8' /> porque não estava decodificando os acentos
 
                 new_post_info = {
                     "titulo": info[0],
@@ -180,6 +180,6 @@ while True:
     #fecha a conexão com o cliente
     client_connection.close()
 
-#OBS: tentar tirar o b do response pra parar o erro da linha 131
+
 
 
